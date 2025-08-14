@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api/categories/list_category.dart';
 import 'package:flutter_api/pages/home_screen.dart';
+import 'package:flutter_api/pages/orders/list.dart';
 import 'package:flutter_api/pages/profile_screen.dart';
-import 'package:flutter_api/posts/list_post_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -15,7 +16,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const ListPostScreen(),
+    // const ListPostScreen(),
+    const ListCategoryScreen(),
+    const ListOrdersScreen(),
     const ProfileScreen(),
   ];
 
@@ -61,7 +64,11 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_rounded),
-                label: 'List Post',
+                label: 'Categories',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_rounded),
+                label: 'Orders',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline),

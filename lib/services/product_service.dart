@@ -4,33 +4,33 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_api/models/post_model.dart';
+import 'package:flutter_api/models/product_model.dart';
 
-class PostService {
-  static const String baseUrl = 'http://127.0.0.1:8000/api/posts';
+class ProductService {
+  static const String baseUrl = 'http://127.0.0.1:8000/api/products';
 
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
 
-  // Get all posts
-  static Future<PostModel> listPosts() async {
+  static Future<ProductModel> listProducts({int? categoryId}) async {
     final token = await getToken();
+    final uri = Uri.parse(categoryId != null ? '$baseUrl?category_id=$categoryId' : baseUrl);
     final response = await http.get(
-      Uri.parse(baseUrl),
+      uri,
       headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
     );
+
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      return PostModel.fromJson(json);
+      return ProductModel.fromJson(json);
     } else {
-      throw Exception('Failed to load posts');
+      throw Exception('Failed to load products');
     }
   }
 
-  // Get single post by ID
-  static Future<DataPost> showPost(int id) async {
+  static Future<DataProduct> showProduct(int id) async {
     final token = await getToken();
     final response = await http.get(
       Uri.parse('$baseUrl/$id'),
@@ -39,32 +39,32 @@ class PostService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return DataPost.fromJson(data['data']);
+      return DataProduct.fromJson(data['data']);
     } else {
-      throw Exception('Failed to load post');
+      throw Exception('Failed to load product');
     }
   }
 
-  // Create new post
-  static Future<bool> createPost(
-    String title,
-    String content,
-    int status,
-    Uint8List? imageBytes,
-    String? imageName,
+  static Future<bool> createProduct(
+      String name,
+      String description,
+      int price,
+      int categoryId,
+      Uint8List? imageBytes,
+      String? imageName,
   ) async {
     final token = await getToken();
-    final uri = Uri.parse(baseUrl);
-    final request = http.MultipartRequest('POST', uri);
+    final request = http.MultipartRequest('POST', Uri.parse(baseUrl));
 
-    request.fields['title'] = title;
-    request.fields['content'] = content;
-    request.fields['status'] = status.toString();
+    request.fields['name'] = name;
+    request.fields['description'] = description;
+    request.fields['price'] = price.toString();
+    request.fields['category_id'] = categoryId.toString();
 
     if (imageBytes != null && imageName != null) {
       request.files.add(
         http.MultipartFile.fromBytes(
-          'foto',
+          'image',
           imageBytes,
           filename: imageName,
           contentType: MediaType('image', 'jpeg'),
@@ -73,34 +73,31 @@ class PostService {
     }
 
     request.headers['Authorization'] = 'Bearer $token';
-
     final response = await request.send();
     return response.statusCode == 201;
   }
 
-  // Update existing post
-  static Future<bool> updatePost(
-    int id,
-    String title,
-    String content,
-    int status,
-    Uint8List? imageBytes,
-    String? imageName,
+  static Future<bool> updateProduct(
+      int id,
+      String name,
+      String description,
+      int price,
+      int categoryId,
+      Uint8List? imageBytes,
+      String? imageName,
   ) async {
     final token = await getToken();
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('$baseUrl/$id?_method=PUT'),
-    );
+    final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/$id?_method=PUT'));
 
-    request.fields['title'] = title;
-    request.fields['content'] = content;
-    request.fields['status'] = status.toString();
+    request.fields['name'] = name;
+    request.fields['description'] = description;
+    request.fields['price'] = price.toString();
+    request.fields['category_id'] = categoryId.toString();
 
     if (imageBytes != null && imageName != null) {
       request.files.add(
         http.MultipartFile.fromBytes(
-          'foto',
+          'image',
           imageBytes,
           filename: imageName,
           contentType: MediaType('image', 'jpeg'),
@@ -109,13 +106,11 @@ class PostService {
     }
 
     request.headers['Authorization'] = 'Bearer $token';
-
     final response = await request.send();
     return response.statusCode == 200;
   }
 
-  // Delete post
-  static Future<bool> deletePost(int id) async {
+  static Future<bool> deleteProduct(int id) async {
     final token = await getToken();
     final response = await http.delete(
       Uri.parse('$baseUrl/$id'),
