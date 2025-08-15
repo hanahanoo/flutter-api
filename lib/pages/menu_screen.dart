@@ -16,16 +16,15 @@ class _MenuScreenState extends State<MenuScreen> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    // const ListPostScreen(),
     const ListCategoryScreen(),
-    const ListOrdersScreen(),
+    const OrderPage(),
     const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, 
+      extendBody: true,
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: _pages[_currentIndex],
@@ -48,26 +47,24 @@ class _MenuScreenState extends State<MenuScreen> {
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) => setState(() => _currentIndex = index),
-            selectedItemColor: Colors.blueAccent,
+            selectedItemColor: Colors.pinkAccent, // Pink nuansa
             unselectedItemColor: Colors.grey[400],
             backgroundColor: Colors.black.withOpacity(0.8),
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.normal,
-            ),
+            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_rounded),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
-                label: 'Categories',
+                icon: Icon(Icons.category_rounded),
+                label: 'Products',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
+                icon: Icon(Icons.receipt_long_rounded),
                 label: 'Orders',
               ),
               BottomNavigationBarItem(

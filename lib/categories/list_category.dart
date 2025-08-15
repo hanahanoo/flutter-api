@@ -28,12 +28,15 @@ class _ListCategoryScreenState extends State<ListCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: const Text('Categories'),
+        backgroundColor: Colors.pink,
+        title: const Text('Pilih Kategori'),
         actions: [
           IconButton(
             onPressed: _refreshCategories,
             icon: const Icon(Icons.refresh),
+            color: Colors.white,
           ),
         ],
       ),
@@ -49,16 +52,22 @@ class _ListCategoryScreenState extends State<ListCategoryScreen> {
 
           final categories = snapshot.data?.data ?? [];
           if (categories.isEmpty) {
-            return const Center(child: Text('No categories found'));
+            return const Center(child: Text('Tidak ada kategori.'));
           }
 
-          return ListView.builder(
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              return Card(
-                child: ListTile(
-                  title: Text(category.name ?? 'No Name'),
+          return Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: GridView.builder(
+              itemCount: categories.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 2 kolom
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 3 / 2,
+              ),
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -70,9 +79,36 @@ class _ListCategoryScreenState extends State<ListCategoryScreen> {
                       ),
                     );
                   },
-                ),
-              );
-            },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.pink[100],
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.pink.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          category.name ?? 'No Name',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.pink[900],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

@@ -1,113 +1,74 @@
-
-// ignore_for_file: unnecessary_string_interpolations
-
-import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_api/pages/orders/list_order_detail.dart';
 import 'package:flutter_api/models/order_model.dart';
 import 'package:flutter_api/services/order_service.dart';
-import 'package:flutter/material.dart';
-// import 'package:api_flutter/pages/posts/detail_posts_screen.dart';
-// import 'package:api_flutter/pages/posts/create_post_screen.dart';
 
-class ListOrdersScreen extends StatefulWidget {
-  const ListOrdersScreen({super.key});
-
-  @override
-  State<ListOrdersScreen> createState() => _ListOrdersScreenState();
-}
-
-class _ListOrdersScreenState extends State<ListOrdersScreen> {
-  late Future<OrderModel> _futureOrders;
-
-  @override
-  void initState() {
-    super.initState();
-    _futureOrders = OrderServices.listOrders();
-  }
-
-  void _refreshPosts() {
-    setState(() {
-      _futureOrders = OrderServices.listOrders();
-    });
-  }
-
-  String _formatDate(dynamic date) {
-    if (date == null) return '';
-
-    if (date is DateTime) {
-      return '${date.day}/${date.month}/${date.year}';
-    }
-
-    if (date is String) {
-      final d = DateTime.tryParse(date);
-      if (d != null) {
-        return '${d.day}/${d.month}/${d.year}';
-      }
-    }
-
-    return '';
-  }
+class OrderPage extends StatelessWidget {
+  const OrderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: const Text('My Posts'),
-        actions: [
-          IconButton(onPressed: _refreshPosts, icon: const Icon(Icons.refresh)),
-        ],
+        backgroundColor: Colors.pink,
+        foregroundColor: Colors.white,
+        title: const Text('Daftar Order'),
+        centerTitle: true,
       ),
-      body: FutureBuilder<OrderModel>(
-        future: _futureOrders,
+      body: FutureBuilder<List<DataOrder>>(
+        future: OrderServices.listOrders(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('Belum ada order'));
           }
 
-          final orders = snapshot.data?.data ?? [];
-          if (orders.isEmpty) {
-            return const Center(child: Text('No orders found'));
-          }
-
+          final orders = snapshot.data!;
           return ListView.builder(
+            padding: const EdgeInsets.all(16),
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final order = orders[index];
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                color: Colors.white,
                 child: ListTile(
-                  // onTap: () async {
-                  //   final result = await Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (_) => OrderDetailPage(orderCode: order.orderCode!),
-                  //     ),
-                  //   );
-                  //   if (result == true) _refreshPosts();
-                  // },
-                  leading: const Icon(Icons.article),
-                  title: Text(order.orderCode ?? 'No Title'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (order.total != null && order.total!.toString().isNotEmpty)
-                        Text('Total : Rp.'+
-                          order.total.toString(),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      Text(
-                        '${_formatDate(order.createdAt)}',
-                        style: TextStyle(
-                          color:Colors.orange,
-                          fontSize: 12,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.pink[200],
+                    child: const Icon(Icons.receipt_long, color: Colors.white),
+                  ),
+                  title: Text(
+                    'Order ${order.orderCode}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.pink[900],
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Total: Rp ${order.total}',
+                    style: TextStyle(color: Colors.pink[600]),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => OrderDetailPage(
+                          code: order.orderCode ?? '',
                         ),
                       ),
-                    ],
-                  ),
-                  trailing: Text('#${order.id}'),
+                    );
+                  },
                 ),
               );
             },

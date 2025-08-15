@@ -18,30 +18,38 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[50],
+      backgroundColor: Colors.pink[50],
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const CircleAvatar(
+              // Logo
+              CircleAvatar(
                 radius: 48,
-                backgroundColor: Colors.blue,
-                child: Icon(Icons.lock, size: 48, color: Colors.white),
+                backgroundColor: Colors.pink[300],
+                child: const Icon(Icons.lock, size: 48, color: Colors.white),
               ),
               const SizedBox(height: 20),
-              const Text(
+
+              // Welcome Text
+              Text(
                 "Selamat Datang",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink[900],
+                ),
               ),
-              const Text(
+              const SizedBox(height: 4),
+              Text(
                 "Silakan login untuk melanjutkan",
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(color: Colors.pink[700]),
               ),
               const SizedBox(height: 30),
 
-              // Form Card
+              // Form
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -49,9 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
+                      color: Colors.pink.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -60,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextField(
                       controller: emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                         labelText: 'Email',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -72,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         labelText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -80,6 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
+
+                    // Button login
                     ElevatedButton.icon(
                       onPressed: () async {
                         bool success = await _authService.login(
@@ -90,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (success) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => MenuScreen()),
+                            MaterialPageRoute(builder: (_) => const MenuScreen()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -98,12 +108,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         }
                       },
-                      icon: Icon(Icons.login),
+                      icon: const Icon(Icons.login),
                       label: const Text("Login"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.pink[400],
                         foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 50),
+                        minimumSize: const Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -114,14 +124,22 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               const SizedBox(height: 20),
+
+              // Register button
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => RegisterScreen()),
+                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
                   );
                 },
-                child: const Text("Belum punya akun? Daftar di sini"),
+                child: Text(
+                  "Belum punya akun? Daftar di sini",
+                  style: TextStyle(
+                    color: Colors.pink[800],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ],
           ),

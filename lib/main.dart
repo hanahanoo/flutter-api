@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api/categories/list_category.dart';
 import 'package:flutter_api/pages/auth/login_screen.dart';
-import 'package:flutter_api/pages/menu_screen.dart';
+import 'package:flutter_api/pages/menu_screen.dart'; // import halaman categories
 import 'package:flutter_api/services/auth_service.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -15,7 +16,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Belajar Flutter',
-      home: AuthCheck(),
+      // Nanti kita pakai widget AuthCheck di home
+      home: const AuthCheck(),
+      // Tambahkan routes supaya bisa navigation ke halaman lain
+      routes: {
+        '/menu': (context) => const MenuScreen(),
+        '/categories': (context) => const ListCategoryScreen(),
+        '/login': (context) => const LoginScreen(),
+      },
     );
   }
 }
@@ -47,9 +55,9 @@ class _AuthCheckState extends State<AuthCheck> {
             body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasData && snapshot.data == true) {
-          return MenuScreen();
+          return const MenuScreen();
         } else {
-          return LoginScreen();
+          return const LoginScreen();
         }
       },
     );
